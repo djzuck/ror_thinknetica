@@ -1,20 +1,19 @@
-my_triangle=[]
 print "Введи длину стороны a: "
-my_triangle<<gets.chomp.to_i
+a = gets.chomp.to_f
 
 print "Введи длину стороны b: "
-my_triangle<<gets.chomp.to_i
+b = gets.chomp.to_f
 
 print "Введи длину стороны c: "
-my_triangle<<gets.chomp.to_i
+c = gets.chomp.to_f
 
-a, b, c = my_triangle.sort.reverse
+a, b, c = [a, b, c].sort
 
-if c**2==a**2+b**2
+if c**2 == a**2 + b**2
   puts "Треугольник прямоугольный."
-elsif a==b&&b==c
+elsif a == b && b == c
   puts "Треугольник равнобедренный и равносторонний, но не прямоугольный."
-elsif a==b||b==c||c==a
+elsif a == b || b == c || c == a
   puts "Треугольник прямоугольный и равнобедренный."
 else
   puts "Треугольник не прямоугольный."

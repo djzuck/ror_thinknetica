@@ -1,13 +1,13 @@
 print "Hi. What's your name? "
-name=gets.chomp
+name = gets.chomp
 
 print "Enter your height, please: "
-height=gets.chomp
+height = gets.chomp
 
-weight=height.to_i-110
+weight = height.to_f - 110
 
-if weight>0
-  puts "#{name}, your perfect weight #{weight}."
+if weight > 0
+  puts "#{ name }, your perfect weight #{ weight }."
 else
-  puts "#{name}, your weight is already perfect!"
+  puts "#{ name }, your weight is already perfect!"
 end

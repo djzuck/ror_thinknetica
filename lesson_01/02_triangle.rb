@@ -1,7 +1,7 @@
 print "Введи длину основания: "
-a=gets.chomp
+a = gets.chomp.to_f
 
 print "Введи высоту треугольника: "
-h=gets.chomp
+h = gets.chomp.to_f
 
-puts "Площадь треугольника: #{s=1/2.0*(a.to_i*h.to_i)}"
+puts "Площадь треугольника: #{ s = 0.5 * (a * h) }"
