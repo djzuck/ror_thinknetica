@@ -5,7 +5,7 @@ sum_purchases = 0
 loop do
   print "Введи название товара или Стоп для оплаты покупок: "
   name = gets.chomp
-  break if name.downcase == 'Стоп'
+  break if name.downcase == 'стоп'
 
   print 'Введи цену товара: '
   price = gets.to_f
@@ -15,7 +15,7 @@ loop do
   basket[name] = { price: price, quantity: quantity }
 end
 
-puts "| Название товара" | Цена за единицу | Количество единиц | Итоговая стоимость |"
+puts "| Название товара | Цена за единицу | Количество единиц | Итоговая стоимость |"
 puts "| --------------------------------------------------------------------------- |"
 
 basket.each do |key, value|
