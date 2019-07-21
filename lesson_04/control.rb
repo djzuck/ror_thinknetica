@@ -1,103 +1,109 @@
 class Control
 
-def control
-  loop do
-    print 'Введите цифру:'
-    print '1, чтобы создать станцию'
-    print '2, чтобы создать поезд'
-    print '3, чтобы создать маршрут и управлять станциями в нем (добавлять, удалять)'
-    print '4, чтобы назначить маршрут поезду'
-    print '5, чтобы добавить вагон к поезду'
-    print '6, чтобы отцепить вагон от поезда'
-    print '7, чтобы переместить поезд по маршруту вперед'
-    print '8, чтобы переместить поезд по маршруту назад'
-    print '9, чтобы просмотреть список станций'
-    print '10, чтобы просмотреть список поездов на станции'
-    print '0, чтобы завершить работу'
-    user_input = gets.chomp.to_i
-end
+  def initialize
+    @stations_list = []
+    @trains_list = []
+    @routes_list = []
+  end
 
-case user_input
-when 1
-  create_station
-when 2
-  create_train
-when 3
-  manage_route
-when 4
-  assign_route
-when 5
-  add_carriage!
-when 6
-  rmv_carriage!
-when 7
-  to_next_station!
-when 8
-  to_previous_station!
-when 9
-  route_stations
-when 10
-  trains_on_station
-when 0
-  break
-else
-  print 'Вы ввели неверное значение.'
-end
+  def control
+    loop do
+      puts 'Введите цифру:'
+      puts '1, чтобы создать станцию'
+      puts '2, чтобы создать поезд'
+      puts '3, чтобы создать маршрут и управлять станциями в нем (добавлять, удалять)'
+      puts '4, чтобы назначить маршрут поезду'
+      puts '5, чтобы добавить вагон к поезду'
+      puts '6, чтобы отцепить вагон от поезда'
+      puts '7, чтобы переместить поезд по маршруту вперед и назад'
+      puts '8, чтобы просмотреть список станций'
+      puts '9, чтобы просмотреть список поездов на станции'
+      puts '0, чтобы завершить работу'
+      user_input = gets.chomp.to_i
 
-@stations_list = []
-@trains_list = {}
-@routes_list = []
-@count_routes = 0
+      case user_input
+      when 1
+        create_station
+      when 2
+        create_train
+      when 3
+        manage_route
+      when 4
+        assign_route
+      when 5
+        add_carriage!
+      when 6
+        rmv_carriage!
+      when 7
+        move_train
+      when 8
+        route_stations
+      when 9
+        trains_on_station
+      when 0
+        break
+      else
+        puts 'Вы ввели неверное значение.'
+      end
+    end
+  end
 
-protected
+  protected #юзер может только вводить запрашиваемые интерфейсом данные и не должен иметь возможности вызывать методы напрямую
 
   def show_routes
+    print 'Список маршрутов: '
     @routes_list.each.with_index(1) do |route, index|
-      print "#{index}. #{route.name.station_of_depart.capitalize} - #{route.name.station_of_arriv.capitalize}."
+    puts "#{index}. #{route.station_of_depart.capitalize} - #{route.station_of_arriv.capitalize}."
+    end
+  end
+
+  def show_trains
+    print 'Список поездов: '
+    @trains_list.each.with_index(1) do |train, index|
+    puts "#{index}. #{train}."
+    end
+  end
+
+  def show_stations
+    print 'Список станций: '
+    @stations_list.each.with_index(1) do |station, index|
+    puts "#{index}. #{station}."
     end
   end
 
   def create_station
     print 'Введите название станции: '
     station_name = gets.chomp
-    if @stations_list.include?(station_name)
-      print "Станция с указанным названием была создана ранее."
+    if (@stations_list || '').include?(station_name)
+      puts "Станция с указанным названием была создана ранее."
     else
       new_station = Station.new(station_name)
       @stations_list << new_station
-      print "Станция #{new_station} успешно создана."
+      puts "Станция #{station_name} успешно создана."
     end
   end
 
   def create_train
-    case create_train
-      print 'Введите 1 для создания пассажирского поезда или 2 - для грузового: '
-      type_train = gets.chomp.to_i
+    print 'Введите 1 для создания пассажирского поезда или 2 - для грузового: '
+    type_train = gets.chomp.to_i
 
+    case type_train
     when 1
       print 'Введите номер поезда: '
       number = gets.chomp
-      if @trains_list.include?(number)
-        print "Поезд с указанным номером № #{number} был создан ранее."
-      else
-        new_passTrain = PassengerTrain.new(number, type_train)
-        @trains_list = { :number => type_train }
-        print "Поезд № #{number} успешно создан."
-      end
+      new_pass_train = PassengerTrain.new(number, type_train)
+      @trains_list << new_pass_train
+      puts "Поезд № #{number} успешно создан."
 
     when 2
       print 'Введите номер поезда: '
       number = gets.chomp
-      if @trains_list.include?(number)
-        print "Поезд с указанным номером № #{number} был создан ранее."
-      else
-        new_cargoTrain = CargoTrain.new(number, type_train)
-        @trains_list = { :number => type_train }
-        print "Поезд № #{number} успешно создан."
-      end
+      new_cargo_train = CargoTrain.new(number, type_train)
+      @trains_list << new_cargo_train
+      puts "Поезд № #{number} успешно создан."
 
     else
-      print 'Неверно указан тип поезда.'
+      puts 'Неверно указан тип поезда.'
     end
   end
 
@@ -105,7 +111,7 @@ protected
     print 'Введите 1, чтобы создать маршрут, 2 - чтобы добавить станцию в маршрут, 3 - чтобы удалить станцию из маршрута: '
     manage = gets.chomp.to_i
 
-    case manage_route
+    case manage
     when 1
       print 'Введите начальную станцию маршрута: '
       station_of_depart = gets.chomp
@@ -113,141 +119,169 @@ protected
       station_of_arriv = gets.chomp
       new_route = Route.new(station_of_depart, station_of_arriv)
       @routes_list << new_route
-      print "Маршрут #{station_of_depart} - #{station_of_arriv} успешно создан."
+      puts "Маршрут #{station_of_depart.capitalize} - #{station_of_arriv.capitalize} успешно создан."
 
     when 2
       show_routes
       print 'Введите номер маршрута: '
-      number_route = gets.chomp.to_i
-      print 'Введите имя добавляемой станции: '
-      station_name = gets.chomp
-      routes_list[number_route - 1].add_station(station_name)
-      print "Станция #{station_name} успешно добавлена в маршрут."
+      route_number = gets.chomp.to_i
+      if route_number > (@routes_list.size + 1) || route_number < 1
+        puts 'Неверный запрос.'
+      else
+        print 'Введите имя добавляемой станции: '
+        station_name = gets.chomp
+        @routes_list[route_number - 1].add_station(station_name)
+        puts "Станция #{station_name.capitalize} успешно добавлена в маршрут."
+      end
 
     when 3
       show_routes
       print 'Введите номер маршрута: '
-      number_route = gets.chomp.to_i
-      print 'Введите имя удаляемой станции: '
-      station_name = gets.chomp
-      routes_list[number_route - 1].delete_station(station_name)
-      print "Станция #{station_name} успешно удалена из маршрута."
+      route_number = gets.chomp.to_i
+      if route_number > (@routes_list.size + 1) || route_number < 1
+        puts 'Неверный запрос.'
+      else
+        print 'Введите имя удаляемой станции: '
+        station_name = gets.chomp
+        @routes_list[route_number - 1].delete_station(station_name)
+        puts "Станция #{station_name} успешно удалена из маршрута."
+      end
+
     else
-      print 'Неверный запрос.'
+      puts 'Неверный запрос.'
+    end
   end
 
   def assign_route
-    show_routes
-    if create_route && create_train
-      print 'Укажите номер маршрута для его назначения: '
-      route = gets.chomp.to_i
-      print 'Укажите номер поезда, которому будет назначен маршрут: '
-      train = gets.chomp
-      if @trains_list.include?{ |trains| trains == train }
-        train.set_route(route - 1)
-        print "Маршрут для поезда #{train} успешно назначен."
-      else
-        print 'Указанный поезд не найден.'
-      end
+    if (@routes_list || '').nil? && (@trains_list || '').nil?
+      puts 'Вы не создали ни одного маршрута или поезда.'
     else
-      print 'Вы не создали ни одного маршрута или поезда.'
+      show_routes
+      print 'Введите номер маршрута для его назначения: '
+      route = gets.chomp.to_i
+      if route > (@routes_list.size + 1) || route < 1
+        puts 'Неверный запрос.'
+      else
+        show_trains
+        print 'Введите номер поезда, которому будет назначен маршрут: '
+        train = gets.chomp.to_i
+        if train > (@trains_list.size + 1) || train < 1
+          puts 'Неверный запрос.'
+        else
+          train.set_route(route - 1)
+          puts "Маршрут для поезда #{train} успешно назначен."
+        end
+      end
     end
   end
 
   def add_carriage!
-    if create_train
-      print 'Укажите номер поезда: '
-      train = gets.chomp
-      if @trains_list.include?{ |trains| trains == train }
-        train.set_route(route)
-        print 'Укажите тип вагонов: 1 - если пассажирский, 2 - если грузовой): '
-        type_carriage = gets.chomp.to_i
+  if (@trains_list || '').nil?
+    puts 'Вы не создали ни одного поезда.'
+  else
+    show_trains
+    print 'Введите номер поезда: '
+    train = gets.chomp.to_i
+    if train > (@trains_list.size + 1) || train < 1
+      puts 'Неверный запрос.'
+    else
+      train.set_route(route)
+      print 'Введите тип вагонов: 1 - если пассажирский, 2 - если грузовой): '
+      type_carriage = gets.chomp.to_i
         if type_carriage == 1
-          print 'Укажите количество вагонов в поезде: '
-          carriage = gets.chomp
+          print 'Введите количество вагонов в поезде: '
+          carriage = gets.chomp.to_i
           train.add_pass_carriage(carriage)
-          print "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
+          puts "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
         elsif type_carriage == 2
-          print 'Укажите количество вагонов в поезде: '
-          carriage = gets.chomp
+          print 'Введите количество вагонов в поезде: '
+          carriage = gets.chomp.to_i
           train.add_cargo_carriage(carriage)
-          print "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
+          puts "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
         else
-          print 'Вы ввели неверный тип вагона.'
+          puts 'Вы ввели неверный тип вагона.'
         end
       end
     end
   end
 
   def rmv_carriage!
-    if create_train
-      print 'Укажите номер поезда: '
-      train = gets.chomp
-      if @trains_list.include?{ |trains| trains == train }
+    if (@trains_list || '').nil?
+      puts 'Вы не создали ни одного поезда.'
+    else
+      show_trains
+      print 'Введите номер поезда: '
+      train = gets.chomp.to_i
+      if train > (@trains_list.size + 1) || train < 1
+        puts 'Неверный запрос.'
+      else
         train.rmv_carriage
-        print "Вагон успешно удален у поезда #{train}."
-      else
-        print 'Указанный поезд не найден.'
+        puts "Вагон успешно удален у поезда #{train}."
       end
     end
   end
 
-  def to_next_station!
-    if create_route && create_train
-      print 'Укажите номер поезда: '
-      train = gets.chomp
-      if @trains_list.include?{ |trains| trains == train }
-        train.to_next_station
-        current_station = train.current_station
-        print "Поезд успешно перемещен на станцию #{current_station}."
-      else
-        print 'Указанный поезд не найден.'
-      end
+  def move_train
+    if (@routes_list || '').nil? && (@trains_list || '').nil?
+      puts 'Вы не создали ни одного маршрута или поезда.'
     else
-      print 'Вы не создали ни одного маршрута или поезда.'
-    end
-  end
+      show_trains
+      print 'Введите номер поезда: '
+      train_number = gets.chomp.to_i
+      if train > (@trains_list.size + 1) || train < 1
+        puts 'Неверный запрос.'
+      else
+        print "Введите 1, чтобы переместить поезд № #{train_number} на следующую станцию, 2 - на предыдущую: "
+        input = gets.chomp.to_i
 
-  def to_previous_station!
-    if create_route && create_train
-      print 'Укажите номер поезда: '
-      train = gets.chomp
-      if @trains_list.include?{ |trains| trains == train }
-        train.to_previous_station
-        current_station = train.current_station
-        print "Поезд успешно перемещен на станцию #{current_station}."
-      else
-        print 'Указанный поезд не найден.'
+        case input
+        when 1
+          train_number.to_next_station
+          current_station = train_number.current_station
+          puts "Поезд успешно перемещен на станцию #{current_station}."
+
+        when 2
+          train_number.to_previous_station
+          current_station = train_number.current_station
+          puts "Поезд успешно перемещен на станцию #{current_station}."
+
+        else
+          puts 'Неверный запрос.'
+        end
       end
-    else
-      print 'Вы не создали ни одного маршрута или поезда.'
     end
   end
 
   def route_stations
-    show_routes
-    if create_route
+    if (@routes_list || '').nil?
+      puts 'Вы не создали ни одного маршрута.'
+    else
+      show_routes
       print 'Введите номер маршрута: '
       route = gets.chomp.to_i
-      route_stations = routes_list[route - 1].show_stations
-      print "Маршрут #{route} включает в себя следующие станции: #{route_stations}."
-    else
-      print 'Вы не создали ни одного маршрута.'
+      if route > (@routes_list.size + 1) || route < 1
+        puts 'Неверный запрос.'
+      else
+        route_stations = routes_list[route - 1].show_stations
+        puts "Маршрут #{route} включает в себя следующие станции: #{route_stations}."
+      end
     end
   end
 
   def trains_on_station
-    if create_train && create_station
-      print 'Укажите название станции: '
-      station = gets.chomp
-      if @stations_list.include?{ |stations| stations == station }
+    if (@trains_list || '').nil? && (@stations_list || '').nil?
+      puts 'Вы не создали ни одного поезда или станции.'
+    else
+      show_stations
+      print 'Укажите номер станции: '
+      station = gets.chomp.to_i
+      if station > (@stations_list.size + 1) || station < 1
+        puts 'Неверный запрос.'
+      else
         show_trains = station.trains
         puts "На станции #{station} расположены следующие поезда: #{show_trains}."
-      else
-        print 'Указанная станция не найдена.'
       end
-    else
-      print 'Вы не создали ни одного поезда или станции.'
     end
   end
+
 end
