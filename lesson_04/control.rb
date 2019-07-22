@@ -168,8 +168,8 @@ class Control
         if train > (@trains_list.size + 1) || train < 1
           puts 'Неверный запрос.'
         else
-          train.set_route(route - 1)
-          puts "Маршрут для поезда #{train} успешно назначен."
+          @trains_list[train - 1].set_route(route - 1)
+          puts 'Маршрут для поезда успешно назначен.'
         end
       end
     end
@@ -185,19 +185,18 @@ class Control
     if train > (@trains_list.size + 1) || train < 1
       puts 'Неверный запрос.'
     else
-      train.set_route(route)
       print 'Введите тип вагонов: 1 - если пассажирский, 2 - если грузовой): '
       type_carriage = gets.chomp.to_i
         if type_carriage == 1
           print 'Введите количество вагонов в поезде: '
           carriage = gets.chomp.to_i
-          train.add_pass_carriage(carriage)
-          puts "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
+          @trains_list[train - 1].add_pass_carriage(carriage)
+          puts 'Вагон(-ы) успешно добавлен(-ы) к поезду.'
         elsif type_carriage == 2
           print 'Введите количество вагонов в поезде: '
           carriage = gets.chomp.to_i
-          train.add_cargo_carriage(carriage)
-          puts "Вагон(-ы) успешно добавлен(-ы) к поезду #{train}."
+          @trains_list[train - 1].add_cargo_carriage(carriage)
+          puts 'Вагон(-ы) успешно добавлен(-ы) к поезду.'
         else
           puts 'Вы ввели неверный тип вагона.'
         end
@@ -215,7 +214,7 @@ class Control
       if train > (@trains_list.size + 1) || train < 1
         puts 'Неверный запрос.'
       else
-        train.rmv_carriage
+        @trains_list[train - 1].rmv_carriage
         puts "Вагон успешно удален у поезда #{train}."
       end
     end
@@ -236,13 +235,13 @@ class Control
 
         case input
         when 1
-          train_number.to_next_station
-          current_station = train_number.current_station
+          @trains_list[train_number - 1].to_next_station
+          current_station = @trains_list[train_number - 1].current_station
           puts "Поезд успешно перемещен на станцию #{current_station}."
 
         when 2
-          train_number.to_previous_station
-          current_station = train_number.current_station
+          @trains_list[train_number - 1].to_previous_station
+          current_station = @trains_list[train_number - 1].current_station
           puts "Поезд успешно перемещен на станцию #{current_station}."
 
         else
@@ -262,8 +261,8 @@ class Control
       if route > (@routes_list.size + 1) || route < 1
         puts 'Неверный запрос.'
       else
-        route_stations = routes_list[route - 1].show_stations
-        puts "Маршрут #{route} включает в себя следующие станции: #{route_stations}."
+        route_stations = @routes_list[route - 1].show_stations
+        puts "Маршрут включает в себя следующие станции: #{route_stations}."
       end
     end
   end
@@ -278,8 +277,8 @@ class Control
       if station > (@stations_list.size + 1) || station < 1
         puts 'Неверный запрос.'
       else
-        show_trains = station.trains
-        puts "На станции #{station} расположены следующие поезда: #{show_trains}."
+        show_trains = @stations_list[station - 1].trains
+        puts "На станции расположены следующие поезда: #{show_trains}."
       end
     end
   end

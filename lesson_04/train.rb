@@ -26,11 +26,11 @@ class Train
   end
 
   def add_carriage(carriage)
-    @carriages[0] = carriage if speed == 0
+    @carriages << carriage if speed == 0
   end
 
   def rmv_carriage
-    @carriages.map!{ |carriage| carriage - 1 } if speed == 0 && carriages > 0
+    @carriages.pop if speed == 0 && carriages > 0
   end
 
   def set_route(route)
